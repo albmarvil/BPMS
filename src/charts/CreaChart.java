@@ -27,13 +27,12 @@ public class CreaChart {
 	
 	public CreaChart(Sonido s){
 		this.input = s.getAudioStream();
-		this.serieB = new XYSeries ("Canal A");
+		this.serieA = new XYSeries ("Canal A");
 		this.serieB = new XYSeries ("Canal B");
 		this.count = 0;
 	}
 	
-	private DefaultCategoryDataset añadeMuestras() throws IOException{
-		DefaultCategoryDataset dataset = new DefaultCategoryDataset(); 
+	private void añadeMuestras() throws IOException{
 		
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -49,38 +48,32 @@ public class CreaChart {
 				break;
 			}
 			baos.write(abBuffer, 0, nBytesRead);
-			//arranco la detección
-			/*extracción de un canal*/
-			byte[] abAudioData = baos.toByteArray();
-			List<List<Short>> muestras = Utiles.extraeMuestras(abAudioData);
-			List<Short> a = muestras.get(0);//canal left
-			List<Short> b = muestras.get(1);//canal right
-			
-			for(Short s:a){
-				dataset.addValue(s, "Muestras", count);
-				count++;
-			}
-			
-
-			
-			baos = new ByteArrayOutputStream();
 		}
-		return dataset;
+			
+		byte[] abAudioData = baos.toByteArray();
+		List<List<Short>> muestras = Utiles.extraeMuestras(abAudioData);
+		List<Short> a = muestras.get(0);//canal left
+		List<Short> b = muestras.get(1);//canal right
+		
+		for(Short s:a){
+			serieA.add(count,s);
+			count++;
+		}
 	}
 	
 	public XYSeriesCollection getDataset(){
 		XYSeriesCollection dataset = new XYSeriesCollection();
 		dataset.addSeries(serieA);
-		dataset.addSeries(serieB);
 		return dataset;
 	}
 	
 	public void muestraChart() throws IOException{
-		JFreeChart chart = ChartFactory.createLineChart( 
+		añadeMuestras();
+		JFreeChart chart = ChartFactory.createXYLineChart( 
 				"Line Chart Demo 2", // chart title 
 				"X", // x axis label 
 				"Y", // y axis label 
-				añadeMuestras(), // data 
+				getDataset(), // data 
 				PlotOrientation.VERTICAL, 
 				true, // include legend 
 				true, // tooltips 
