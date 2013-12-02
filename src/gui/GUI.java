@@ -20,6 +20,7 @@ import sonido.FactoriaSonido;
 import sonido.Sonido;
 import statisticbpm.BPMCalculator;
 import statisticbpm.BPMCalculatorImpl;
+import charts.CreaChart;
 
 public class GUI {
 
@@ -29,7 +30,7 @@ public class GUI {
 
 	private Sonido s;
 	private BPMCalculator calculator;
-	
+	private CreaChart chart;
 	/**
 	 * Launch the application.
 	 */
@@ -73,7 +74,7 @@ public class GUI {
 				s = f.createSonido();
 				calculator = new BPMCalculatorImpl(s);
 				
-				
+				chart = new CreaChart(s);
 				
 				
 				if(s!=null){
@@ -143,6 +144,21 @@ public class GUI {
 		txtpnC.setEditable(false);
 		txtpnC.setBackground(SystemColor.menu);
 		frmBpmcalculator.getContentPane().add(txtpnC);
+		
+		JButton btnChart = new JButton("chart");
+		btnChart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					chart.muestraChart();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		springLayout.putConstraint(SpringLayout.NORTH, btnChart, 0, SpringLayout.NORTH, btnDetect);
+		springLayout.putConstraint(SpringLayout.EAST, btnChart, -77, SpringLayout.EAST, frmBpmcalculator.getContentPane());
+		frmBpmcalculator.getContentPane().add(btnChart);
 		
 		btnDetect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
