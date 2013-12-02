@@ -32,10 +32,10 @@ public class CreaChart {
 		this.count = 0;
 	}
 	
-	public void añadeMuestras() throws IOException{
+	private void añadeMuestras() throws IOException{
 		/*EXTRACCION DE LOS BYTES DE LAS MUESTRAS*/
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		int nBufferSize = 1024 * 4; //TO DO
+		int nBufferSize = 1024 * 4;
 		byte[]	abBuffer = new byte[nBufferSize];
 		while (true){
 			System.out.println(("trying to read (bytes): " + abBuffer.length));
@@ -47,20 +47,18 @@ public class CreaChart {
 			baos.write(abBuffer, 0, nBytesRead);
 			
 			
-			byte[] abAudioData = baos.toByteArray();
-			
-			/*extracción de un canal*/
-			List<List<Short>> muestras = Utiles.extraeMuestras(abAudioData);
-			List<Short> a = muestras.get(0);//canal left
-			List<Short> b = muestras.get(1);//canal right
-			
-			for(Short s:a){
-				serieA.add(count, s);
-				serieB.add(count, new Double(b.get(count)));
-				count++;
-			}
-			count = 0;
-			baos = new ByteArrayOutputStream();
+		}
+		byte[] abAudioData = baos.toByteArray();
+		
+		/*extracción de un canal*/
+		List<List<Short>> muestras = Utiles.extraeMuestras(abAudioData);
+		List<Short> a = muestras.get(0);//canal left
+		List<Short> b = muestras.get(1);//canal right
+		
+		for(Short s:a){
+			serieA.add(count, s);
+			serieB.add(count, new Double(b.get(count)));
+			count++;
 		}
 
 	}
@@ -73,7 +71,7 @@ public class CreaChart {
 	}
 	
 	public void muestraChart() throws IOException{
-//		añadeMuestras();
+		añadeMuestras();
 		
 		
 		
