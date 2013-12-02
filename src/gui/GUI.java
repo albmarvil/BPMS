@@ -154,6 +154,13 @@ public class GUI {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
+				try {
+					chart.añadeMuestras();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		springLayout.putConstraint(SpringLayout.NORTH, btnChart, 0, SpringLayout.NORTH, btnDetect);
