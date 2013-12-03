@@ -36,9 +36,9 @@ public class ChartMuestras {
 		int nBufferSize = 1024 * input.getFormat().getFrameSize();
 		byte[]	abBuffer = new byte[nBufferSize];
 		while (true){
-			System.out.println(("trying to read (bytes): " + abBuffer.length));
+//			System.out.println(("trying to read (bytes): " + abBuffer.length));
 			int	nBytesRead = input.read(abBuffer);
-			System.out.println("read (bytes): " + nBytesRead);
+//			System.out.println("read (bytes): " + nBytesRead);
 			if (nBytesRead == -1){
 				break;
 			}
