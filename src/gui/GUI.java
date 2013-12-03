@@ -5,8 +5,11 @@ import java.awt.EventQueue;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 
+import javax.sound.sampled.AudioInputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -20,16 +23,29 @@ import sonido.FactoriaSonido;
 import sonido.Sonido;
 import statisticbpm.BPMCalculator;
 import statisticbpm.BPMCalculatorImpl;
+import utiles.Utiles;
+import charts.ChartEnergy;
+import charts.ChartMuestras;
+
+import javax.swing.JPanel;
+import javax.swing.JLabel;
 
 public class GUI {
 
 	private JFrame frmBpmcalculator;
 	private JTextField textField;
 	private JTextField textField_1;
-
-	private Sonido s;
-	private BPMCalculator calculator;
+	private static JLabel label_playing;
+	private static JLabel label_samplerate;
+	private static JLabel label_bitssample;
+	private static JLabel label_mode;
+	private static JLabel label_samples;
 	
+	private static FactoriaSonido f;
+	private static Sonido s;
+	private BPMCalculator calculator;
+	private ChartMuestras chart;
+	private ChartEnergy chartE;
 	/**
 	 * Launch the application.
 	 */
@@ -60,25 +76,27 @@ public class GUI {
 	private void initialize() {
 		frmBpmcalculator = new JFrame();
 		frmBpmcalculator.setTitle("Statistic BPMCalculator");
-		frmBpmcalculator.setBounds(100, 100, 579, 397);
+		frmBpmcalculator.setBounds(100, 100, 468, 536);
 		frmBpmcalculator.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		SpringLayout springLayout = new SpringLayout();
 		frmBpmcalculator.getContentPane().setLayout(springLayout);
 		
 		JButton btnAbrirArchivo = new JButton("Abrir Archivo");
+		springLayout.putConstraint(SpringLayout.NORTH, btnAbrirArchivo, 91, SpringLayout.NORTH, frmBpmcalculator.getContentPane());
 		btnAbrirArchivo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			
-				FactoriaSonido f = new FactoriaSonido();
+				f = new FactoriaSonido();
 				s = f.createSonido();
 				calculator = new BPMCalculatorImpl(s);
 				
-				
-				
+				chart = new ChartMuestras(f.createSonido(s));
+				chartE = new ChartEnergy(f.createSonido(s));
 				
 				if(s!=null){
 					textField.setText(s.getAbsPath());
 				}
+				actualizaInfo();
 				
 			}
 			
@@ -95,21 +113,75 @@ public class GUI {
 		frmBpmcalculator.getContentPane().add(textField);
 		textField.setColumns(10);
 		
-		JButton btnDetect = new JButton("Calculate!");
-		springLayout.putConstraint(SpringLayout.WEST, btnDetect, 176, SpringLayout.WEST, frmBpmcalculator.getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, btnDetect, -46, SpringLayout.SOUTH, frmBpmcalculator.getContentPane());
-		frmBpmcalculator.getContentPane().add(btnDetect);
-		
 		JTextPane txtpnSoloArchivosWave = new JTextPane();
-		springLayout.putConstraint(SpringLayout.NORTH, btnAbrirArchivo, 36, SpringLayout.SOUTH, txtpnSoloArchivosWave);
+		springLayout.putConstraint(SpringLayout.WEST, txtpnSoloArchivosWave, 142, SpringLayout.WEST, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, txtpnSoloArchivosWave, -35, SpringLayout.NORTH, textField);
 		txtpnSoloArchivosWave.setBackground(SystemColor.menu);
 		txtpnSoloArchivosWave.setEditable(false);
-		springLayout.putConstraint(SpringLayout.NORTH, txtpnSoloArchivosWave, 35, SpringLayout.NORTH, frmBpmcalculator.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, txtpnSoloArchivosWave, 120, SpringLayout.WEST, frmBpmcalculator.getContentPane());
 		txtpnSoloArchivosWave.setText("Solo archivos WAVE compatibles");
 		frmBpmcalculator.getContentPane().add(txtpnSoloArchivosWave);
 		
+		JPanel panel = new JPanel();
+		springLayout.putConstraint(SpringLayout.NORTH, panel, 60, SpringLayout.SOUTH, btnAbrirArchivo);
+		springLayout.putConstraint(SpringLayout.WEST, panel, 0, SpringLayout.WEST, btnAbrirArchivo);
+		springLayout.putConstraint(SpringLayout.SOUTH, panel, 188, SpringLayout.SOUTH, btnAbrirArchivo);
+		springLayout.putConstraint(SpringLayout.EAST, panel, 0, SpringLayout.EAST, textField);
+		panel.setLayout(null);
+		frmBpmcalculator.getContentPane().add(panel);
+		
+		JLabel lblArchivo = new JLabel("Archivo:");
+		lblArchivo.setBounds(44, 0, 51, 14);
+		panel.add(lblArchivo);
+		
+		label_playing = new JLabel("-");
+		label_playing.setBounds(113, 0, 172, 14);
+		panel.add(label_playing);
+		
+		label_samplerate = new JLabel("-");
+		label_samplerate.setBounds(113, 25, 172, 14);
+		panel.add(label_samplerate);
+		
+		JLabel label_3 = new JLabel("Sample Rate:");
+		label_3.setBounds(20, 25, 93, 14);
+		panel.add(label_3);
+		
+		JLabel label_4 = new JLabel("Bits per sample:");
+		label_4.setBounds(10, 50, 93, 14);
+		panel.add(label_4);
+		
+		label_bitssample = new JLabel("-");
+		label_bitssample.setBounds(113, 50, 172, 14);
+		panel.add(label_bitssample);
+		
+		JLabel label_6 = new JLabel("Mode:");
+		label_6.setBounds(52, 75, 51, 14);
+		panel.add(label_6);
+		
+		label_mode = new JLabel("-");
+		label_mode.setBounds(113, 75, 172, 14);
+		panel.add(label_mode);
+		
+		JLabel lblNSamples = new JLabel("N\u00BA Samples:");
+		lblNSamples.setBounds(20, 100, 75, 14);
+		panel.add(lblNSamples);
+		
+		label_samples = new JLabel("-");
+		label_samples.setBounds(113, 100, 259, 14);
+		panel.add(label_samples);
+		
+		JPanel panel_1 = new JPanel();
+		springLayout.putConstraint(SpringLayout.NORTH, panel_1, 21, SpringLayout.SOUTH, panel);
+		springLayout.putConstraint(SpringLayout.WEST, panel_1, 103, SpringLayout.WEST, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -54, SpringLayout.SOUTH, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, panel_1, -120, SpringLayout.EAST, frmBpmcalculator.getContentPane());
+		frmBpmcalculator.getContentPane().add(panel_1);
+		panel_1.setLayout(null);
+		
 		final JCheckBox chckbxCVariable = new JCheckBox("C Variable");
+		chckbxCVariable.setBounds(10, 7, 98, 23);
+		springLayout.putConstraint(SpringLayout.NORTH, chckbxCVariable, 5, SpringLayout.NORTH, panel_1);
+		springLayout.putConstraint(SpringLayout.WEST, chckbxCVariable, 21, SpringLayout.WEST, panel_1);
+		panel_1.add(chckbxCVariable);
 		chckbxCVariable.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if(chckbxCVariable.isSelected()){
@@ -121,28 +193,66 @@ public class GUI {
 		});
 		
 		chckbxCVariable.setSelected(true);
-		springLayout.putConstraint(SpringLayout.NORTH, chckbxCVariable, 23, SpringLayout.SOUTH, btnAbrirArchivo);
-		springLayout.putConstraint(SpringLayout.WEST, chckbxCVariable, 0, SpringLayout.WEST, txtpnSoloArchivosWave);
-		frmBpmcalculator.getContentPane().add(chckbxCVariable);
-		
-		textField_1 = new JTextField();
-		textField_1.setText("1.3");
-		textField_1.setBackground(new Color(255, 255, 255));
-		springLayout.putConstraint(SpringLayout.NORTH, textField_1, 1, SpringLayout.NORTH, chckbxCVariable);
-		springLayout.putConstraint(SpringLayout.WEST, textField_1, 88, SpringLayout.EAST, chckbxCVariable);
-		springLayout.putConstraint(SpringLayout.EAST, textField_1, 82, SpringLayout.EAST, btnDetect);
-		textField_1.setToolTipText("");
-		textField_1.setEnabled(false);
-		frmBpmcalculator.getContentPane().add(textField_1);
-		textField_1.setColumns(10);
 		
 		JTextPane txtpnC = new JTextPane();
-		springLayout.putConstraint(SpringLayout.NORTH, txtpnC, 0, SpringLayout.NORTH, chckbxCVariable);
-		springLayout.putConstraint(SpringLayout.EAST, txtpnC, -11, SpringLayout.WEST, textField_1);
+		txtpnC.setBounds(154, 7, 17, 20);
+		springLayout.putConstraint(SpringLayout.NORTH, txtpnC, 6, SpringLayout.NORTH, panel_1);
+		springLayout.putConstraint(SpringLayout.WEST, txtpnC, 99, SpringLayout.WEST, panel_1);
+		panel_1.add(txtpnC);
 		txtpnC.setText("C:");
 		txtpnC.setEditable(false);
 		txtpnC.setBackground(SystemColor.menu);
-		frmBpmcalculator.getContentPane().add(txtpnC);
+		
+		textField_1 = new JTextField();
+		textField_1.setBounds(177, 8, 42, 20);
+		springLayout.putConstraint(SpringLayout.NORTH, textField_1, 17, SpringLayout.SOUTH, chckbxCVariable);
+		springLayout.putConstraint(SpringLayout.WEST, textField_1, 20, SpringLayout.WEST, panel_1);
+		springLayout.putConstraint(SpringLayout.EAST, textField_1, -15, SpringLayout.EAST, frmBpmcalculator.getContentPane());
+		panel_1.add(textField_1);
+		textField_1.setText("1.3");
+		textField_1.setBackground(new Color(255, 255, 255));
+		textField_1.setToolTipText("");
+		textField_1.setEnabled(false);
+		textField_1.setColumns(10);
+		
+		JButton btnDetect = new JButton("Calculate!");
+		btnDetect.setBounds(73, 52, 98, 23);
+		panel_1.add(btnDetect);
+		springLayout.putConstraint(SpringLayout.WEST, btnDetect, 120, SpringLayout.WEST, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, btnDetect, -24, SpringLayout.SOUTH, frmBpmcalculator.getContentPane());
+		
+		JButton btnChart = new JButton("Gr\u00E1ficos");
+		btnChart.setBounds(73, 82, 98, 23);
+		panel_1.add(btnChart);
+		springLayout.putConstraint(SpringLayout.WEST, btnChart, 190, SpringLayout.WEST, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, btnChart, -25, SpringLayout.SOUTH, frmBpmcalculator.getContentPane());
+		btnChart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				boolean rutaArchivo = textField.getText().length()>0;
+				
+				if(rutaArchivo){
+
+						int confirm = JOptionPane.showConfirmDialog(frmBpmcalculator, "Le advertimos que la herramienta para representar los gráficos falla \n para conjuntos de muestras más grandes que el umbral marcado. \n¿Desea continuar?");
+						
+						if (JOptionPane.OK_OPTION == confirm){
+							try {
+								chart.muestraChart();
+								chartE.muestraChart();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+				}else{
+					//Ventana de mensaje de error
+					JOptionPane.showMessageDialog(frmBpmcalculator, "Elija correctamente el archivo");
+				}
+			}
+		});
+		springLayout.putConstraint(SpringLayout.SOUTH, txtpnC, -47, SpringLayout.NORTH, btnChart);
+		springLayout.putConstraint(SpringLayout.SOUTH, textField_1, -5, SpringLayout.NORTH, btnChart);
+		springLayout.putConstraint(SpringLayout.EAST, btnDetect, -41, SpringLayout.WEST, btnChart);
 		
 		btnDetect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -185,5 +295,50 @@ public class GUI {
 			}
 		});
 		
+	}
+	
+	public static void actualizaInfo(){
+		String nombre = s.getNombre();
+		String samplerate = ""+s.getClip().getFormat().getSampleRate()+" Hz";
+		Integer samples = 0;
+		try {
+			samples = cuentaMuestras(f.createSonido(s));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String mode = ""+s.getClip().getFormat().getEncoding();
+		String bitspersample = s.getClip().getFormat().getSampleSizeInBits()+" - "+s.getClip().getFormat().getChannels()+"canales";
+		label_playing.setText(nombre);
+		label_samplerate.setText(samplerate);
+		if(samples>=500000){
+			label_samples.setForeground(Color.RED);
+			label_samples.setText(""+samples+" - Umbral gráfico sobrepasado");
+		}else{
+			label_samples.setText(""+samples);
+			label_samples.setForeground(Color.BLACK);
+		}
+		label_mode.setText(mode);
+		label_bitssample.setText(bitspersample);
+	}
+	
+	public static Integer cuentaMuestras(Sonido s) throws IOException{
+		Integer res = 0;
+		Integer frameSize = s.getClip().getFormat().getFrameSize();
+		AudioInputStream input = s.getAudioStream();
+		/*EXTRACCION DE LOS BYTES DE LAS MUESTRAS*/
+		int nBufferSize = 1024 * frameSize;
+		byte[]	abBuffer = new byte[nBufferSize];
+//		System.out.println("Abriendo el fichero");
+		
+		while (true){
+//			System.out.println(("trying to read (bytes): " + abBuffer.length));
+			int	nBytesRead = input.read(abBuffer);
+//			System.out.println("read (bytes): " + nBytesRead);
+			if (nBytesRead == -1){
+				break;
+			}
+			res = res + 1024;
+		}
+		return res;
 	}
 }
