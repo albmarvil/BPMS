@@ -24,21 +24,11 @@ public class ChartEnergy {
 	
 	public ChartEnergy(Sonido s){
 		this.input = s.getAudioStream();
-<<<<<<< HEAD:src/charts/CreaChart.java
-		this.serieA = new XYSeries ("Canal A");
-		this.serieB = new XYSeries ("Canal B");
-=======
 		this.serieA = new XYSeries ("Energía");
->>>>>>> origin/Charts:src/charts/ChartEnergy.java
 		this.count = 0;
 	}
 	
 	private void añadeMuestras() throws IOException{
-<<<<<<< HEAD:src/charts/CreaChart.java
-		
-=======
->>>>>>> origin/Charts:src/charts/ChartEnergy.java
-		
 		/*EXTRACCION DE LOS BYTES DE LAS MUESTRAS*/
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int nBufferSize = 1024 * input.getFormat().getFrameSize();
@@ -51,9 +41,7 @@ public class ChartEnergy {
 				break;
 			}
 			baos.write(abBuffer, 0, nBytesRead);
-<<<<<<< HEAD:src/charts/CreaChart.java
-		}
-=======
+		
 			
 			byte[] abAudioData = baos.toByteArray();
 			
@@ -63,25 +51,11 @@ public class ChartEnergy {
 			List<Short> b = muestras.get(1);//canal right
 			
 			beatDetector(a,b);
->>>>>>> origin/Charts:src/charts/ChartEnergy.java
-			
-		byte[] abAudioData = baos.toByteArray();
-		List<List<Short>> muestras = Utiles.extraeMuestras(abAudioData);
-		List<Short> a = muestras.get(0);//canal left
-		List<Short> b = muestras.get(1);//canal right
-		
-		for(Short s:a){
-			serieA.add(count,s);
-			count++;
+	
+			baos = new ByteArrayOutputStream();
 		}
 	}
 	
-<<<<<<< HEAD:src/charts/CreaChart.java
-	public XYSeriesCollection getDataset(){
-		XYSeriesCollection dataset = new XYSeriesCollection();
-		dataset.addSeries(serieA);
-		return dataset;
-=======
 	private void beatDetector(List<Short> a, List<Short> b){
 		
 		
@@ -99,22 +73,15 @@ public class ChartEnergy {
 		XYSeriesCollection datasetAB = new XYSeriesCollection();
 		datasetAB.addSeries(serieA);
 		return datasetAB;
->>>>>>> origin/Charts:src/charts/ChartEnergy.java
 	}
 	
 	public void muestraChart() throws IOException{
 		añadeMuestras();
-<<<<<<< HEAD:src/charts/CreaChart.java
-		JFreeChart chart = ChartFactory.createXYLineChart( 
-				"Line Chart Demo 2", // chart title 
-				"X", // x axis label 
-				"Y", // y axis label 
-=======
 		JFreeChart chartAB = ChartFactory.createXYLineChart( 
 				"Energía", // chart title 
 				"Muestras", // x axis label 
 				"Energía", // y axis label 
->>>>>>> origin/Charts:src/charts/ChartEnergy.java
+
 				getDataset(), // data 
 				PlotOrientation.VERTICAL, 
 				true, // include legend 
