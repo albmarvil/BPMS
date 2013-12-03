@@ -20,17 +20,20 @@ import sonido.FactoriaSonido;
 import sonido.Sonido;
 import statisticbpm.BPMCalculator;
 import statisticbpm.BPMCalculatorImpl;
-import charts.CreaChart;
+import charts.ChartEnergy;
+import charts.ChartMuestras;
 
 public class GUI {
 
 	private JFrame frmBpmcalculator;
 	private JTextField textField;
 	private JTextField textField_1;
-
+	
+	private FactoriaSonido f;
 	private Sonido s;
 	private BPMCalculator calculator;
-	private CreaChart chart;
+	private ChartMuestras chart;
+	private ChartEnergy chartE;
 	/**
 	 * Launch the application.
 	 */
@@ -70,12 +73,12 @@ public class GUI {
 		btnAbrirArchivo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			
-				FactoriaSonido f = new FactoriaSonido();
+				f = new FactoriaSonido();
 				s = f.createSonido();
 				calculator = new BPMCalculatorImpl(s);
 				
-				chart = new CreaChart(s);
-				
+				chart = new ChartMuestras(f.createSonido(s));
+				chartE = new ChartEnergy(f.createSonido(s));
 				
 				if(s!=null){
 					textField.setText(s.getAbsPath());
@@ -150,6 +153,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					chart.muestraChart();
+					chartE.muestraChart();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

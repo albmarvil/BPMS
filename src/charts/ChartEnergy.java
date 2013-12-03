@@ -16,21 +16,20 @@ import org.jfree.data.xy.XYSeriesCollection;
 import sonido.Sonido;
 import utiles.Utiles;
 
-public class ChartMuestras {
+public class ChartEnergy {
 	private AudioInputStream input;
 	private XYSeries serieA;
-	
-	private XYSeries serieB;
 	private Integer count;
 	
-	public ChartMuestras(Sonido s){
+	
+	public ChartEnergy(Sonido s){
 		this.input = s.getAudioStream();
-		this.serieA = new XYSeries ("Canal A");
-		this.serieB = new XYSeries ("Canal B");
+		this.serieA = new XYSeries ("Energía");
 		this.count = 0;
 	}
 	
 	private void añadeMuestras() throws IOException{
+		
 		/*EXTRACCION DE LOS BYTES DE LAS MUESTRAS*/
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int nBufferSize = 1024 * input.getFormat().getFrameSize();
@@ -44,45 +43,52 @@ public class ChartMuestras {
 			}
 			baos.write(abBuffer, 0, nBytesRead);
 			
+			byte[] abAudioData = baos.toByteArray();
 			
+			/*extracción de un canal*/
+			List<List<Short>> muestras = Utiles.extraeMuestras(abAudioData);
+			List<Short> a = muestras.get(0);//canal left
+			List<Short> b = muestras.get(1);//canal right
+			
+			beatDetector(a,b);
+			
+			baos = new ByteArrayOutputStream();
 		}
-		byte[] abAudioData = baos.toByteArray();
+	}
+	
+	private void beatDetector(List<Short> a, List<Short> b){
 		
-		/*extracción de un canal*/
-		List<List<Short>> muestras = Utiles.extraeMuestras(abAudioData);
-		List<Short> a = muestras.get(0);//canal left
-		List<Short> b = muestras.get(1);//canal right
 		
-		for(Short s:a){
-			serieA.add(count, s);
-			serieB.add(count, new Double(b.get(count)));
+		int n_samples = a.size();
+		
+		Double energy = 0.0;
+		for (int i = 0; i< n_samples; i++){
+			energy = energy + a.get(i)*a.get(i) + b.get(i)*b.get(i);
+			serieA.add(count, energy);
 			count++;
 		}
-
 	}
 	
 	public XYSeriesCollection getDataset(){		
 		XYSeriesCollection datasetAB = new XYSeriesCollection();
 		datasetAB.addSeries(serieA);
-		datasetAB.addSeries(serieB);
 		return datasetAB;
 	}
 	
 	public void muestraChart() throws IOException{
 		añadeMuestras();
 		JFreeChart chartAB = ChartFactory.createXYLineChart( 
-				"Canales AB", // chart title 
+				"Energía", // chart title 
 				"Muestras", // x axis label 
-				"Amplitud", // y axis label 
+				"Energía", // y axis label 
 				getDataset(), // data 
 				PlotOrientation.VERTICAL, 
 				true, // include legend 
 				true, // tooltips 
 				false // urls 
 				);
-		ChartFrame frameAB = new ChartFrame("Canales AB", chartAB); 
+		ChartFrame frameAB = new ChartFrame("Energy", chartAB); 
 		frameAB.pack(); 
 		frameAB.setVisible(true);
 	}
-	
 }
