@@ -238,7 +238,7 @@ public class GUI {
 						if (JOptionPane.OK_OPTION == confirm){
 							try {
 								chart.muestraChart();
-								chartE.muestraChart();
+//								chartE.muestraChart();
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -310,7 +310,7 @@ public class GUI {
 		String bitspersample = s.getClip().getFormat().getSampleSizeInBits()+" - "+s.getClip().getFormat().getChannels()+"canales";
 		label_playing.setText(nombre);
 		label_samplerate.setText(samplerate);
-		if(samples>=500000){
+		if(samples>=5000000){
 			label_samples.setForeground(Color.RED);
 			label_samples.setText(""+samples+" - Umbral gráfico sobrepasado");
 		}else{

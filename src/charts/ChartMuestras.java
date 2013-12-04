@@ -53,10 +53,28 @@ public class ChartMuestras {
 		List<Short> a = muestras.get(0);//canal left
 		List<Short> b = muestras.get(1);//canal right
 		
+		Integer j = 0;
+		Integer corteMuestras;
+		if(a.size()<500000){			
+			corteMuestras = 100;
+		}else{
+			corteMuestras = 1000;
+		}
+		Double auxa = 0.;
+		Double auxb = 0.;
 		for(Short s:a){
-			serieA.add(count, s);
-			serieB.add(count, new Double(b.get(count)));
-			count++;
+			if(j<corteMuestras){
+				auxa = auxa + s;
+				auxb = auxb + new Double(b.get(count));
+				j++;
+				count++;
+			}else{
+				auxa = auxa/corteMuestras;
+				auxb = auxb/corteMuestras;
+				serieA.add(count, auxa);
+				serieB.add(count, auxb);
+				j = 0;
+			}
 		}
 
 	}
