@@ -29,6 +29,8 @@ import charts.ChartMuestras;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class GUI {
 
@@ -40,6 +42,9 @@ public class GUI {
 	private static JLabel label_bitssample;
 	private static JLabel label_mode;
 	private static JLabel label_samples;
+	private JCheckBox chckbxA;
+	private JCheckBox chckbxEnerga;
+	private JButton btnChart;
 	
 	private static FactoriaSonido f;
 	private static Sonido s;
@@ -76,7 +81,7 @@ public class GUI {
 	private void initialize() {
 		frmBpmcalculator = new JFrame();
 		frmBpmcalculator.setTitle("Statistic BPMCalculator");
-		frmBpmcalculator.setBounds(100, 100, 468, 536);
+		frmBpmcalculator.setBounds(100, 100, 467, 588);
 		frmBpmcalculator.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		SpringLayout springLayout = new SpringLayout();
 		frmBpmcalculator.getContentPane().setLayout(springLayout);
@@ -172,7 +177,7 @@ public class GUI {
 		JPanel panel_1 = new JPanel();
 		springLayout.putConstraint(SpringLayout.NORTH, panel_1, 21, SpringLayout.SOUTH, panel);
 		springLayout.putConstraint(SpringLayout.WEST, panel_1, 103, SpringLayout.WEST, frmBpmcalculator.getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -54, SpringLayout.SOUTH, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -126, SpringLayout.SOUTH, frmBpmcalculator.getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, panel_1, -120, SpringLayout.EAST, frmBpmcalculator.getContentPane());
 		frmBpmcalculator.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
@@ -216,16 +221,53 @@ public class GUI {
 		textField_1.setColumns(10);
 		
 		JButton btnDetect = new JButton("Calculate!");
-		btnDetect.setBounds(73, 52, 98, 23);
+		btnDetect.setBounds(62, 62, 98, 23);
 		panel_1.add(btnDetect);
 		springLayout.putConstraint(SpringLayout.WEST, btnDetect, 120, SpringLayout.WEST, frmBpmcalculator.getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, btnDetect, -24, SpringLayout.SOUTH, frmBpmcalculator.getContentPane());
 		
-		JButton btnChart = new JButton("Gr\u00E1ficos");
-		btnChart.setBounds(73, 82, 98, 23);
-		panel_1.add(btnChart);
-		springLayout.putConstraint(SpringLayout.WEST, btnChart, 190, SpringLayout.WEST, frmBpmcalculator.getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, btnChart, -25, SpringLayout.SOUTH, frmBpmcalculator.getContentPane());
+		JPanel panel_2 = new JPanel();
+		springLayout.putConstraint(SpringLayout.NORTH, panel_2, 12, SpringLayout.SOUTH, panel_1);
+		springLayout.putConstraint(SpringLayout.WEST, panel_2, 103, SpringLayout.WEST, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel_2, -27, SpringLayout.SOUTH, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, panel_2, 0, SpringLayout.EAST, panel_1);
+		frmBpmcalculator.getContentPane().add(panel_2);
+		panel_2.setLayout(null);
+		
+		btnChart = new JButton("Gr\u00E1ficos");
+		btnChart.setBounds(62, 53, 98, 23);
+		panel_2.add(btnChart);
+		springLayout.putConstraint(SpringLayout.WEST, btnChart, 0, SpringLayout.WEST, textField);
+		springLayout.putConstraint(SpringLayout.SOUTH, btnChart, -23, SpringLayout.SOUTH, frmBpmcalculator.getContentPane());
+		
+		chckbxA = new JCheckBox("Amplitud");
+		chckbxA.setSelected(true);
+		chckbxA.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				if(!chckbxA.isSelected() && !chckbxEnerga.isSelected()){
+					btnChart.setEnabled(false);
+				}else{
+					btnChart.setEnabled(true);
+				}
+			}
+		});
+		chckbxA.setBounds(6, 7, 97, 23);
+		panel_2.add(chckbxA);
+		
+		chckbxEnerga = new JCheckBox("Energ\u00EDa");
+		chckbxEnerga.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if(!chckbxA.isSelected() && !chckbxEnerga.isSelected()){
+					btnChart.setEnabled(false);
+				}else{
+					btnChart.setEnabled(true);
+				}
+			}
+		});
+		chckbxEnerga.setSelected(true);
+		chckbxEnerga.setBounds(125, 7, 97, 23);
+		panel_2.add(chckbxEnerga);
+		
 		btnChart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -236,12 +278,15 @@ public class GUI {
 						int confirm = JOptionPane.showConfirmDialog(frmBpmcalculator, "Le advertimos que la herramienta para representar los gráficos falla \n para conjuntos de muestras más grandes que el umbral marcado. \n¿Desea continuar?");
 						
 						if (JOptionPane.OK_OPTION == confirm){
-							try {
-								chart.muestraChart();
-//								chartE.muestraChart();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+							if(!(chckbxA.isSelected()) & !(chckbxEnerga.isSelected())){
+								JOptionPane.showMessageDialog(frmBpmcalculator, "Seleccione el gráfico a mostrar" );
+							}else{
+								if(chckbxA.isSelected()){
+									chart.run();
+								}
+								if(chckbxEnerga.isSelected()){
+									chartE.run();								
+								}								
 							}
 						}
 				}else{
@@ -253,6 +298,7 @@ public class GUI {
 		springLayout.putConstraint(SpringLayout.SOUTH, txtpnC, -47, SpringLayout.NORTH, btnChart);
 		springLayout.putConstraint(SpringLayout.SOUTH, textField_1, -5, SpringLayout.NORTH, btnChart);
 		springLayout.putConstraint(SpringLayout.EAST, btnDetect, -41, SpringLayout.WEST, btnChart);
+		
 		
 		btnDetect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

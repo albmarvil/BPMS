@@ -17,7 +17,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import sonido.Sonido;
 import utiles.Utiles;
 
-public class ChartEnergy {
+public class ChartEnergy extends Thread{
 	private AudioInputStream input;
 	private XYSeries serieA;
 	private Integer count;
@@ -113,5 +113,13 @@ public class ChartEnergy {
 		ChartFrame frameAB = new ChartFrame("Energy", chartAB); 
 		frameAB.pack(); 
 		frameAB.setVisible(true);
+	}
+	
+	public void run(){
+		try {
+			muestraChart();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

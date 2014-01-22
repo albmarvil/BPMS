@@ -16,7 +16,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import sonido.Sonido;
 import utiles.Utiles;
 
-public class ChartMuestras {
+public class ChartMuestras  extends Thread{
 	private AudioInputStream input;
 	private XYSeries serieA;
 	
@@ -101,6 +101,14 @@ public class ChartMuestras {
 		ChartFrame frameAB = new ChartFrame("Canales AB", chartAB); 
 		frameAB.pack(); 
 		frameAB.setVisible(true);
+	}
+	
+	public void run(){
+		try {
+			muestraChart();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }
