@@ -60,7 +60,7 @@ public Double run(Double C) throws IOException{
 		
 		this.E = new ArrayList<Double>();
 		
-		
+		Integer numeroMuestras = 0;//contador de muestras
 		/*EXTRACCION DE LOS BYTES DE LAS MUESTRAS*/
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int nBufferSize = 1024 * frameSize;
@@ -74,8 +74,10 @@ public Double run(Double C) throws IOException{
 			if (nBytesRead == -1){
 				break;
 			}
+			
+			numeroMuestras= numeroMuestras + 1024;//contamos las muestras para luego calcular la duración
+			
 			baos.write(abBuffer, 0, nBytesRead);
-			//arranco la detección
 			/*extracción de un canal*/
 			byte[] abAudioData = baos.toByteArray();
 			List<List<Short>> muestras = Utiles.extraeMuestras(abAudioData);
@@ -89,7 +91,7 @@ public Double run(Double C) throws IOException{
 			//reiniciamos baos
 			baos = new ByteArrayOutputStream();
 		}
-		double duracion = this.input.getFrameLength()/this.sampleRate/60;
+		double duracion = numeroMuestras/this.sampleRate/60;
 		
 		
 		double media = 0.0; //Media de Beats Seguidos Detectados
@@ -114,7 +116,7 @@ public Double run(Double C) throws IOException{
 		
 		this.E = new ArrayList<Double>();
 		
-		
+		Integer numeroMuestras = 0;//contador de muestras
 		/*EXTRACCION DE LOS BYTES DE LAS MUESTRAS*/
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int nBufferSize = 1024 * frameSize;
@@ -128,9 +130,11 @@ public Double run(Double C) throws IOException{
 			if (nBytesRead == -1){
 				break;
 			}
+			
+			numeroMuestras= numeroMuestras + 1024;//contamos las muestras para luego calcular la duración
+			
 			baos.write(abBuffer, 0, nBytesRead);
-			//arranco la detección
-			/*extracción de un canal*/
+			/*Extraccion de un canal*/
 			byte[] abAudioData = baos.toByteArray();
 			List<List<Short>> muestras = Utiles.extraeMuestras(abAudioData);
 			List<Short> a = muestras.get(0);//canal left
@@ -142,7 +146,8 @@ public Double run(Double C) throws IOException{
 			//reiniciamos baos
 			baos = new ByteArrayOutputStream();
 		}
-		double duracion = this.input.getFrameLength()/this.sampleRate/60;
+		
+		double duracion = numeroMuestras/this.sampleRate/60;
 		
 		
 		double media = 0.0; //Media de Beats Seguidos Detectados

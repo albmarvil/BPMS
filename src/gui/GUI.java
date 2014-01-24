@@ -5,32 +5,28 @@ import java.awt.EventQueue;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SpringLayout;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
+import charts.ChartEnergy;
+import charts.ChartMuestras;
 import sonido.FactoriaSonido;
 import sonido.Sonido;
 import statisticbpm.BPMCalculator;
 import statisticbpm.BPMCalculatorImpl;
-import utiles.Utiles;
-import charts.ChartEnergy;
-import charts.ChartMuestras;
-
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 
 public class GUI {
 
@@ -87,7 +83,8 @@ public class GUI {
 		frmBpmcalculator.getContentPane().setLayout(springLayout);
 		
 		JButton btnAbrirArchivo = new JButton("Abrir Archivo");
-		springLayout.putConstraint(SpringLayout.NORTH, btnAbrirArchivo, 91, SpringLayout.NORTH, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, btnAbrirArchivo, 48, SpringLayout.NORTH, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, btnAbrirArchivo, 22, SpringLayout.WEST, frmBpmcalculator.getContentPane());
 		btnAbrirArchivo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			
@@ -106,31 +103,22 @@ public class GUI {
 			}
 			
 		});
-		springLayout.putConstraint(SpringLayout.WEST, btnAbrirArchivo, 22, SpringLayout.WEST, frmBpmcalculator.getContentPane());
 		btnAbrirArchivo.setIcon(new ImageIcon(GUI.class.getResource("/javax/swing/plaf/metal/icons/ocean/directory.gif")));
 		frmBpmcalculator.getContentPane().add(btnAbrirArchivo);
 		
 		textField = new JTextField();
-		springLayout.putConstraint(SpringLayout.NORTH, textField, 0, SpringLayout.NORTH, btnAbrirArchivo);
+		springLayout.putConstraint(SpringLayout.NORTH, textField, 48, SpringLayout.NORTH, frmBpmcalculator.getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, textField, 27, SpringLayout.EAST, btnAbrirArchivo);
-		springLayout.putConstraint(SpringLayout.SOUTH, textField, 27, SpringLayout.NORTH, btnAbrirArchivo);
-		springLayout.putConstraint(SpringLayout.EAST, textField, 267, SpringLayout.EAST, btnAbrirArchivo);
+		springLayout.putConstraint(SpringLayout.EAST, textField, -47, SpringLayout.EAST, frmBpmcalculator.getContentPane());
 		frmBpmcalculator.getContentPane().add(textField);
 		textField.setColumns(10);
 		
-		JTextPane txtpnSoloArchivosWave = new JTextPane();
-		springLayout.putConstraint(SpringLayout.WEST, txtpnSoloArchivosWave, 142, SpringLayout.WEST, frmBpmcalculator.getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, txtpnSoloArchivosWave, -35, SpringLayout.NORTH, textField);
-		txtpnSoloArchivosWave.setBackground(SystemColor.menu);
-		txtpnSoloArchivosWave.setEditable(false);
-		txtpnSoloArchivosWave.setText("Solo archivos WAVE compatibles");
-		frmBpmcalculator.getContentPane().add(txtpnSoloArchivosWave);
-		
 		JPanel panel = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel, 60, SpringLayout.SOUTH, btnAbrirArchivo);
+		springLayout.putConstraint(SpringLayout.NORTH, panel, 47, SpringLayout.SOUTH, btnAbrirArchivo);
+		springLayout.putConstraint(SpringLayout.SOUTH, panel, -299, SpringLayout.SOUTH, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, textField, -47, SpringLayout.NORTH, panel);
 		springLayout.putConstraint(SpringLayout.WEST, panel, 0, SpringLayout.WEST, btnAbrirArchivo);
-		springLayout.putConstraint(SpringLayout.SOUTH, panel, 188, SpringLayout.SOUTH, btnAbrirArchivo);
-		springLayout.putConstraint(SpringLayout.EAST, panel, 0, SpringLayout.EAST, textField);
+		springLayout.putConstraint(SpringLayout.EAST, panel, -47, SpringLayout.EAST, frmBpmcalculator.getContentPane());
 		panel.setLayout(null);
 		frmBpmcalculator.getContentPane().add(panel);
 		
@@ -175,10 +163,10 @@ public class GUI {
 		panel.add(label_samples);
 		
 		JPanel panel_1 = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel_1, 21, SpringLayout.SOUTH, panel);
-		springLayout.putConstraint(SpringLayout.WEST, panel_1, 103, SpringLayout.WEST, frmBpmcalculator.getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -126, SpringLayout.SOUTH, frmBpmcalculator.getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, panel_1, -120, SpringLayout.EAST, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, panel_1, 31, SpringLayout.SOUTH, panel);
+		springLayout.putConstraint(SpringLayout.WEST, panel_1, 102, SpringLayout.WEST, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -172, SpringLayout.SOUTH, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, panel_1, -121, SpringLayout.EAST, frmBpmcalculator.getContentPane());
 		frmBpmcalculator.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 		
@@ -228,9 +216,9 @@ public class GUI {
 		
 		JPanel panel_2 = new JPanel();
 		springLayout.putConstraint(SpringLayout.NORTH, panel_2, 12, SpringLayout.SOUTH, panel_1);
-		springLayout.putConstraint(SpringLayout.WEST, panel_2, 103, SpringLayout.WEST, frmBpmcalculator.getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, panel_2, -27, SpringLayout.SOUTH, frmBpmcalculator.getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, panel_2, 0, SpringLayout.EAST, panel_1);
+		springLayout.putConstraint(SpringLayout.WEST, panel_2, 102, SpringLayout.WEST, frmBpmcalculator.getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel_2, 99, SpringLayout.SOUTH, panel_1);
+		springLayout.putConstraint(SpringLayout.EAST, panel_2, -1, SpringLayout.EAST, panel_1);
 		frmBpmcalculator.getContentPane().add(panel_2);
 		panel_2.setLayout(null);
 		
@@ -251,7 +239,7 @@ public class GUI {
 				}
 			}
 		});
-		chckbxA.setBounds(6, 7, 97, 23);
+		chckbxA.setBounds(10, 7, 98, 23);
 		panel_2.add(chckbxA);
 		
 		chckbxEnerga = new JCheckBox("Energ\u00EDa");
@@ -265,7 +253,7 @@ public class GUI {
 			}
 		});
 		chckbxEnerga.setSelected(true);
-		chckbxEnerga.setBounds(125, 7, 97, 23);
+		chckbxEnerga.setBounds(154, 7, 97, 23);
 		panel_2.add(chckbxEnerga);
 		
 		btnChart.addActionListener(new ActionListener() {
@@ -313,7 +301,6 @@ public class GUI {
 						try {
 							bpm = calculator.run();
 						} catch (IOException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 						//Ventana de mensaje con BPM
@@ -325,7 +312,6 @@ public class GUI {
 						try {
 							bpm = calculator.run(c);
 						} catch (IOException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 						//Ventana de mensaje con BPM
@@ -343,7 +329,7 @@ public class GUI {
 		
 	}
 	
-	public static void actualizaInfo(){
+	public void actualizaInfo(){
 		String nombre = s.getNombre();
 		String samplerate = ""+s.getClip().getFormat().getSampleRate()+" Hz";
 		Integer samples = 0;
@@ -353,18 +339,29 @@ public class GUI {
 			e.printStackTrace();
 		}
 		String mode = ""+s.getClip().getFormat().getEncoding();
-		String bitspersample = s.getClip().getFormat().getSampleSizeInBits()+" - "+s.getClip().getFormat().getChannels()+"canales";
-		label_playing.setText(nombre);
-		label_samplerate.setText(samplerate);
-		if(samples>=5000000){
-			label_samples.setForeground(Color.RED);
-			label_samples.setText(""+samples+" - Umbral gráfico sobrepasado");
+		
+		Integer sampleSize = s.getClip().getFormat().getSampleSizeInBits();
+		Integer channels = s.getClip().getFormat().getChannels();
+		
+		if(sampleSize != 16){
+			JOptionPane.showMessageDialog(frmBpmcalculator, "El archivo tiene una profundidad de muestra diferente a 16 bits");
+		}else if(channels != 2){
+			JOptionPane.showMessageDialog(frmBpmcalculator, "El archivo no es stereo");
 		}else{
-			label_samples.setText(""+samples);
-			label_samples.setForeground(Color.BLACK);
+			String bitspersample = sampleSize+" bits - "+channels+"canales";
+			label_playing.setText(nombre);
+			label_samplerate.setText(samplerate);
+			if(samples>=5000000){
+				label_samples.setForeground(Color.RED);
+				label_samples.setText(""+samples+" - Umbral gráfico sobrepasado");
+			}else{
+				label_samples.setText(""+samples);
+				label_samples.setForeground(Color.BLACK);
+			}
+			label_mode.setText(mode);
+			label_bitssample.setText(bitspersample);
 		}
-		label_mode.setText(mode);
-		label_bitssample.setText(bitspersample);
+		
 	}
 	
 	public static Integer cuentaMuestras(Sonido s) throws IOException{
