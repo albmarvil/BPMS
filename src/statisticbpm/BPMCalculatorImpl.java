@@ -1,6 +1,5 @@
 package statisticbpm;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +61,6 @@ public Double run(Double C) throws IOException{
 		
 		Integer numeroMuestras = 0;//contador de muestras
 		/*EXTRACCION DE LOS BYTES DE LAS MUESTRAS*/
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int nBufferSize = 1024 * frameSize;
 		byte[]	abBuffer = new byte[nBufferSize];
 //		System.out.println("Abriendo el fichero");
@@ -77,10 +75,8 @@ public Double run(Double C) throws IOException{
 			
 			numeroMuestras= numeroMuestras + 1024;//contamos las muestras para luego calcular la duración
 			
-			baos.write(abBuffer, 0, nBytesRead);
 			/*extracción de un canal*/
-			byte[] abAudioData = baos.toByteArray();
-			List<List<Short>> muestras = Utiles.extraeMuestras(abAudioData);
+			List<List<Short>> muestras = Utiles.extraeMuestras(abBuffer);
 			List<Short> a = muestras.get(0);//canal left
 			List<Short> b = muestras.get(1);//canal right
 						
@@ -89,7 +85,6 @@ public Double run(Double C) throws IOException{
 			beatDetector(a,b,C);
 			
 			//reiniciamos baos
-			baos = new ByteArrayOutputStream();
 		}
 		double duracion = numeroMuestras/this.sampleRate/60;
 		
@@ -118,7 +113,6 @@ public Double run(Double C) throws IOException{
 		
 		Integer numeroMuestras = 0;//contador de muestras
 		/*EXTRACCION DE LOS BYTES DE LAS MUESTRAS*/
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int nBufferSize = 1024 * frameSize;
 		byte[]	abBuffer = new byte[nBufferSize];
 //		System.out.println("Abriendo el fichero");
@@ -133,10 +127,8 @@ public Double run(Double C) throws IOException{
 			
 			numeroMuestras= numeroMuestras + 1024;//contamos las muestras para luego calcular la duración
 			
-			baos.write(abBuffer, 0, nBytesRead);
 			/*Extraccion de un canal*/
-			byte[] abAudioData = baos.toByteArray();
-			List<List<Short>> muestras = Utiles.extraeMuestras(abAudioData);
+			List<List<Short>> muestras = Utiles.extraeMuestras(abBuffer);
 			List<Short> a = muestras.get(0);//canal left
 			List<Short> b = muestras.get(1);//canal right
 			
@@ -144,7 +136,6 @@ public Double run(Double C) throws IOException{
 			
 			beatDetector(a,b);
 			//reiniciamos baos
-			baos = new ByteArrayOutputStream();
 		}
 		
 		double duracion = numeroMuestras/this.sampleRate/60;
